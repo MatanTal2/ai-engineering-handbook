@@ -1,0 +1,41 @@
+{
+  "$comment": "Copy to <repo>/.claude/settings.json (team-shared, commit it). Personal overrides go in settings.local.json, which is gitignored. Hook scripts live in templates/hooks/ - copy them to .claude/hooks/ and chmod +x.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/enforce-cli.sh"
+          },
+          {
+            "type": "command",
+            "command": ".claude/hooks/git-guardrails.sh"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/skill-reminder.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pnpm exec prettier --write \"$CLAUDE_FILE_PATHS\" 2>/dev/null || true"
+          }
+        ]
+      }
+    ]
+  }
+}
